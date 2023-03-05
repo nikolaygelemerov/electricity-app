@@ -22,7 +22,7 @@ export const Breadcrumbs = memo(() => {
     <S.Container>
       {pathname !== '/'
         ? links.map(({ name, to }) => (
-            <Link key={name} to={to} variant="link">
+            <Link key={name} size="medium" to={to} variant="link">
               <FaChevronLeft />
               {name}
             </Link>

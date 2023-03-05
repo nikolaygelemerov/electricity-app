@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useCatch } from '@remix-run/react';
 
-import { SC } from '~/styled';
+import * as S from './styled';
 
 interface CatchBoundaryCmpProps {
   message: string;
@@ -15,10 +15,10 @@ export const CatchBoundaryCmp = memo<CatchBoundaryCmpProps>(({ message }) => {
   const { t } = useTranslation();
 
   return (
-    <SC.Main>
-      <SC.P>{caughtResponse.status}</SC.P>
-      <SC.P>{t(caughtResponse.data?.message || message)}</SC.P>
-    </SC.Main>
+    <S.Main>
+      <S.P>{caughtResponse.status}</S.P>
+      <S.P>{t(caughtResponse.data?.message || message)}</S.P>
+    </S.Main>
   );
 });
 

@@ -9,9 +9,10 @@ export const Link = styled(RemixLink)<LinkProps>`
   gap: var(--offset-xl);
   align-items: center;
   justify-content: center;
-  padding: var(--offset-xl);
+  padding: ${(props) => (props.size === 'medium' ? `var(--offset-l)` : `var(--offset-xl)`)};
   color: var(--color-text);
-  font-size: var(--font-size-xxl);
+  font-size: ${(props) =>
+    props.size === 'medium' ? `var(--font-size-m)` : `var(--font-size-xxl)`};
   text-decoration: none;
   background-color: ${(props) => `var(--color-${props.variant})`};
   border-radius: var(--border-radius);

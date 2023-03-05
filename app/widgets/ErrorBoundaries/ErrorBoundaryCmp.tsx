@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Link } from '@remix-run/react';
 
-import { SC } from '~/styled';
+import * as S from './styled';
 
 interface ErrorBoundaryCmpProps {
   error: Error;
@@ -14,12 +14,12 @@ export const ErrorBoundaryCmp = memo<ErrorBoundaryCmpProps>(({ error, message })
   const { t } = useTranslation();
 
   return (
-    <SC.Main>
-      <SC.P>{t(error.message || message)}</SC.P>
-      <SC.P>
+    <S.Main>
+      <S.P>{t(error.message || message)}</S.P>
+      <S.P>
         {t('backTo')} <Link to="/"> {t('safety')}</Link>
-      </SC.P>
-    </SC.Main>
+      </S.P>
+    </S.Main>
   );
 });
 

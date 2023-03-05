@@ -8,11 +8,13 @@ import { redirect } from '@remix-run/node';
 import { Link } from '~/components';
 import { getUserFromSession } from '~/data/auth.server';
 
+import * as S from './styled';
+
 const Login = memo(() => {
   const { t } = useTranslation();
 
   return (
-    <>
+    <S.Container>
       <Link to="login" variant="success">
         <span>{t('login')}</span>
         <FaSignInAlt />
@@ -21,7 +23,7 @@ const Login = memo(() => {
         <span>{t('signup')}</span>
         <FaUserPlus />
       </Link>
-    </>
+    </S.Container>
   );
 });
 

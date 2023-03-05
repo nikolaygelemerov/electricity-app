@@ -20,7 +20,6 @@ bucket
   });
   */
 
-// Creates a client from a Google service account key
 const storage = new Storage({ credentials: JSON.parse(process.env.GCLOUD_CONFIG as string) });
 
 const bucket = storage.bucket(GCLOUD_TOKI_BUCKET_NAME);

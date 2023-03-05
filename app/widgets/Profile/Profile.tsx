@@ -14,7 +14,7 @@ interface ProfileProps {
 export const Profile = memo<ProfileProps>(({ profileData }) => {
   return (
     <S.Container>
-      <S.P>{profileData.email}</S.P>
+      <S.Span>{profileData.email}</S.Span>
       <Form action="/logout" method="post">
         <Button text="logout" variant="error" />
       </Form>

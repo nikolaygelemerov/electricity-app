@@ -17,7 +17,7 @@ export default function Index() {
     <MeteringPointTabs />
   ) : (
     <Link to="/auth" variant="success">
-      <span>{t('login')}</span>
+      <span>{t('getStarted')}</span>
       <FaArrowRight />
     </Link>
   );

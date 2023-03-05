@@ -40,3 +40,8 @@ export interface ReadJSONLinesParams {
   meteringPointId: string;
   to: string;
 }
+
+export interface ChartSelectValue {
+  price: boolean;
+  usage: boolean;
+}

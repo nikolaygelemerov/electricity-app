@@ -1,46 +1,150 @@
-// eslint-disable-next-line prettier/prettier
-import 'chart.js/auto';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { memo, useEffect, useRef, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+/* eslint-disable @typescript-eslint/no-shadow */
+import type {
+  AnimationModel,
+  AxisModel,
+  BorderModel,
+  ChartSeriesType,
+  LegendSettingsModel,
+  TooltipSettingsModel,
+  ZoomSettingsModel
+} from '@syncfusion/ej2-react-charts';
+import {
+  AreaSeries,
+  ChartComponent,
+  DataLabel,
+  DateTime,
+  Inject,
+  Legend,
+  SeriesCollectionDirective,
+  SeriesDirective,
+  Tooltip,
+  Zoom
+} from '@syncfusion/ej2-react-charts';
 
-import type { ElectricityPriceData } from '~/types';
+import { memo, useMemo } from 'react';
 
 interface ElectricityChartProps {
-  data?: ElectricityPriceData[];
+  animation?: AnimationModel;
+  border?: BorderModel;
+  id: string;
+  legendSettings?: LegendSettingsModel;
+  name?: string;
+  opacity?: number;
+  primaryXAxis: AxisModel;
+  primaryYAxis: AxisModel;
+  seriesData: { x: any; y: any }[];
+  title: string;
+  tooltip?: TooltipSettingsModel;
+  type: ChartSeriesType;
+  zoomsettings?: ZoomSettingsModel;
 }
 
-export const ElectricityChart = memo<ElectricityChartProps>(({ data }) => {
-  const [chartId, setChartId] = useState<string>(Date.now().toString());
-  const chartRef = useRef(null);
+const defaultAnimation = { enable: false };
+const defaultBorder = { color: 'var(--color-error)', width: 0.5 };
 
-  useEffect(() => {
-    // Generate a new chart ID for the new chart
-    setChartId(Date.now().toString());
-  }, [data]);
+const defaultZoomsettings: ZoomSettingsModel = {
+  enableMouseWheelZooming: true,
+  enablePinchZooming: true,
+  enableSelectionZooming: true
+};
 
-  if (!data) {
-    return null;
+const defaultLegendSettings: LegendSettingsModel = { visible: true };
+
+const defaultTooltip = { enable: true, shared: true };
+
+// const primaryXAxis: AxisModel = { title: 'Date', valueType: 'DateTime' };
+// const primaryYAxis: AxisModel = { title: 'Price', valueType: 'Double' };
+// const seriesData = data.map((d) => ({ x: new Date(d.timestamp), y: d.price }));
+
+export const ElectricityChart = memo<ElectricityChartProps>(
+  ({
+    animation = defaultAnimation,
+    border = defaultBorder,
+    id,
+    legendSettings = defaultLegendSettings,
+    name,
+    opacity = 0.3,
+    primaryXAxis,
+    primaryYAxis,
+    seriesData,
+    title,
+    tooltip = defaultTooltip,
+    type,
+    zoomsettings = defaultZoomsettings
+  }) => {
+    const formattedPrimaryXAxis = useMemo(
+      () => ({
+        ...primaryXAxis,
+        labelStyle: {
+          fontFamily: 'var(--font-family)',
+          fontWeight: 'var(--font-weight-bold)',
+          size: 'var(--font-size-m)'
+        },
+        titleStyle: {
+          fontFamily: 'var(--font-family)',
+          fontWeight: 'var(--font-weight-bold)',
+          size: 'var(--font-size-xl)'
+        }
+      }),
+      [primaryXAxis]
+    );
+
+    const formattedPrimaryYAxis = useMemo(
+      () => ({
+        ...primaryYAxis,
+        labelStyle: {
+          fontFamily: 'var(--font-family)',
+          fontWeight: 'var(--font-weight-bold)',
+          size: 'var(--font-size-m)'
+        },
+        titleStyle: {
+          fontFamily: 'var(--font-family)',
+          fontWeight: 'var(--font-weight-bold)',
+          size: 'var(--font-size-xl)'
+        }
+      }),
+      [primaryYAxis]
+    );
+
+    const titleStyle = useMemo(
+      () => ({
+        fontFamily: 'var(--font-family)',
+        fontWeight: 'var(--font-weight-bold)',
+        size: 'var(--font-size-xxl)'
+      }),
+      []
+    );
+
+    return (
+      <ChartComponent
+        key={title}
+        id={id}
+        legendSettings={legendSettings}
+        primaryXAxis={formattedPrimaryXAxis}
+        primaryYAxis={formattedPrimaryYAxis}
+        title={title}
+        titleStyle={titleStyle}
+        zoomSettings={zoomsettings}
+        tooltip={tooltip}
+      >
+        <Inject services={[AreaSeries, Legend, Tooltip, DataLabel, Zoom, DateTime]} />
+        <SeriesCollectionDirective>
+          <SeriesDirective
+            animation={animation}
+            border={border}
+            dataSource={seriesData}
+            name={name}
+            opacity={opacity}
+            type={type}
+            xName="x"
+            yName="y"
+          ></SeriesDirective>
+        </SeriesCollectionDirective>
+      </ChartComponent>
+    );
   }
-
-  const chartData = {
-    datasets: [
-      {
-        borderColor: 'blue',
-        data: data.map((d) => d.price),
-        fill: false,
-        label: 'Price'
-      }
-    ],
-    labels: data.map((d) => new Date(d.timestamp))
-  };
-
-  return (
-    <div>
-      <h2>Electricity Price Chart</h2>
-      <Bar data={chartData} id={chartId} ref={chartRef} />
-    </div>
-  );
-});
+);
 
 ElectricityChart.displayName = 'ElectricityChart';

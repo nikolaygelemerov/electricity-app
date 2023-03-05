@@ -1,3 +1,5 @@
+import { registerLicense } from '@syncfusion/ej2-base';
+
 import { useTranslation } from 'react-i18next';
 
 import type { LoaderArgs } from '@remix-run/node';
@@ -15,6 +17,16 @@ import {
 import i18next from '~/i18next.server';
 
 import mainStyles from '~/styles/main.css';
+
+declare global {
+  interface Window {
+    SYNCFUSION_KEY: string;
+  }
+}
+
+if (typeof window !== 'undefined') {
+  registerLicense(window.SYNCFUSION_KEY);
+}
 
 export const loader = async ({ request }: LoaderArgs) => {
   const locale = await i18next.getLocale(request);

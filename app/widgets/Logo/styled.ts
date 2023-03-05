@@ -10,7 +10,7 @@ export const Span = styled.span`
   margin: 0;
   padding: var(--offset-xl);
   color: var(--color-light-text);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-xxl);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--border-radius);
 `;

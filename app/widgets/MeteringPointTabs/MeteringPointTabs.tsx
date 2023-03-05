@@ -15,7 +15,7 @@ export const MeteringPointTabs = memo(() => {
       <S.H2>{t('meteringPoints')}</S.H2>
       <S.LinksWrap>
         {METERING_POINTS.map((point) => (
-          <Link key={point} to={point} variant="navigate">
+          <Link key={point} to={point} variant="success">
             {point}
             <FaChartBar />
           </Link>

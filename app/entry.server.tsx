@@ -154,7 +154,9 @@ function handleBrowserRequest(
               __html: `window.__APOLLO_STATE__=${JSON.stringify(apolloInitialState).replace(
                 /</g,
                 '\\u003c'
-              )};`
+              )};
+              window.SYNCFUSION_KEY = ${JSON.stringify(process.env.SYNCFUSION_KEY)}
+              `
             }}
           />
         </>,
