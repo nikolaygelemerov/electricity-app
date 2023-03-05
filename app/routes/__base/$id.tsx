@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { ActionFunction } from 'react-router';
 
 import type { LoaderFunction } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { useActionData, useTransition } from '@remix-run/react';
 
 import { Button, DatePicker } from '~/components';
@@ -25,6 +26,8 @@ export default function Index() {
 
   console.log('actionData: ', actionData);
 
+  console.log('transition: ', transition);
+
   const isSubmitting = useMemo(() => transition.state !== 'idle', [transition.state]);
 
   return (
@@ -41,8 +44,14 @@ export default function Index() {
   );
 }
 
-export const loader: LoaderFunction = ({ request }) => {
-  return getUserFromSession(request);
+export const loader: LoaderFunction = async ({ request }) => {
+  const profileData = await getUserFromSession(request);
+
+  if (!profileData) {
+    return redirect('/');
+  }
+
+  return profileData;
 };
 
 export const action: ActionFunction = async ({ params, request }) => {
