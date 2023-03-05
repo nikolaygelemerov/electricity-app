@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import type { ActionFunction } from 'react-router';
 
 import type { LoaderFunction } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
+import type { CatchBoundaryComponent } from '@remix-run/react';
 import { useActionData, useTransition } from '@remix-run/react';
 
 import { Button, DatePicker } from '~/components';
@@ -18,7 +20,7 @@ import type {
   ElectricityQueryFromTo,
   ElectricityUsageData
 } from '~/types';
-import { ChartSelect, ElectricityChart } from '~/widgets';
+import { CatchBoundaryCmp, ChartSelect, ElectricityChart } from '~/widgets';
 
 import * as S from './styled';
 
@@ -122,8 +124,17 @@ export const action: ActionFunction = async ({ params, request }) => {
   const formData = await request.formData();
   const { from, to } = Object.fromEntries(formData) as unknown as ElectricityQueryFromTo;
 
+  if (!from || !to || new Date(from) > new Date(to)) {
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
+    throw json({ message: 'invalidDates' }, { status: 400 });
+  }
+
   return graphQLClient.query({
     query: ELECTRICITY_DATA_QUERY,
     variables: { from, meteringPointId: params?.id, to }
   });
 };
+
+export const CatchBoundary: CatchBoundaryComponent = () => (
+  <CatchBoundaryCmp message="somethingWentWrong" />
+);
