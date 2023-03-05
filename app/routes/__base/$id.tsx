@@ -11,6 +11,7 @@ import { getUserFromSession } from '~/data/auth.server';
 import { graphQLClient } from '~/entry.server';
 import { ELECTRICITY_DATA_QUERY } from '~/queries';
 import type { ElectricityPriceData, ElectricityQueryFromTo, ElectricityUsageData } from '~/types';
+import { ElectricityChart } from '~/widgets';
 
 import * as S from './styled';
 
@@ -20,7 +21,12 @@ export default function Index() {
 
   const actionData:
     | {
-        data: { electricityPrice: ElectricityPriceData; electricityUsage: ElectricityUsageData };
+        data: {
+          electricityData: {
+            electricityPrice: ElectricityPriceData[];
+            electricityUsage: ElectricityUsageData[];
+          };
+        };
       }
     | undefined = useActionData<typeof action>();
 
@@ -31,16 +37,18 @@ export default function Index() {
   const isSubmitting = useMemo(() => transition.state !== 'idle', [transition.state]);
 
   return (
-    <S.Form method="post">
-      <DatePicker id="from" label="dateFrom" name="from" />
-      <DatePicker id="to" label="dateTo" name="to" />
-      <Button
-        disabled={isSubmitting}
-        text={isSubmitting ? 'submitting' : 'submit'}
-        variant="confirm"
-      />
-      <pre>{JSON.stringify(actionData)}</pre>
-    </S.Form>
+    <>
+      <S.Form method="post">
+        <DatePicker id="from" label="dateFrom" name="from" />
+        <DatePicker id="to" label="dateTo" name="to" />
+        <Button
+          disabled={isSubmitting}
+          text={isSubmitting ? 'submitting' : 'submit'}
+          variant="confirm"
+        />
+      </S.Form>
+      <ElectricityChart data={actionData?.data?.electricityData?.electricityPrice} />
+    </>
   );
 }
 
