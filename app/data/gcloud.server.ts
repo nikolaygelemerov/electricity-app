@@ -1,44 +1,113 @@
+import type { DownloadResponse } from '@google-cloud/storage';
 import { Storage } from '@google-cloud/storage';
-import JSONStream from 'JSONStream';
 
 import { GCLOUD_TOKI_BUCKET_NAME, GcloudModel } from '~/services';
-import type {
-  ElectricityCategory,
-  ElectricityCustomerOptions,
-  ElectricityUsageOptions
-} from '~/types';
+import type { ElectricityPriceData, ElectricityUsageData, ReadJSONLinesParams } from '~/types';
+
+/*
+bucket
+  .getFiles()
+  .then((results) => {
+    const files = results[0];
+
+    console.log(`Files in bucket ${GCLOUD_TOKI_BUCKET_NAME}:`);
+    files.forEach((file) => {
+      console.log(file.name);
+    });
+  })
+  .catch((err) => {
+    console.error(`Error listing files in bucket: ${err}`);
+  });
+  */
 
 // Creates a client from a Google service account key
 const storage = new Storage({ credentials: JSON.parse(process.env.GCLOUD_CONFIG as string) });
 
 const bucket = storage.bucket(GCLOUD_TOKI_BUCKET_NAME);
 
-export const readJSONLines = async <T = ElectricityCategory>(
-  category: T,
-  options: T extends 'usage' ? ElectricityUsageOptions : ElectricityCustomerOptions
-) => {
-  const fileName =
-    category === 'usage'
-      ? GcloudModel.buildUsageFilePath(options)
-      : GcloudModel.buildCustomerFilePath(options as ElectricityCustomerOptions);
+export const readJSONLines = async ({ from, meteringPointId, to }: ReadJSONLinesParams) => {
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
 
-  const file = bucket.file(fileName);
+  const promiseData: {
+    electricityPrice: Promise<DownloadResponse | void>[];
+    electricityUsage: Promise<DownloadResponse | void>[];
+  } = { electricityPrice: [], electricityUsage: [] };
 
-  const readStream = file.createReadStream();
+  const data: {
+    electricityPrice: ElectricityPriceData[];
+    electricityUsage: ElectricityUsageData[];
+  } = { electricityPrice: [], electricityUsage: [] };
 
-  const jsonLinesStream = JSONStream.parse();
+  for (let date = fromDate; date <= toDate; date.setDate(date.getDate() + 1)) {
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
 
-  return new Promise((resolve, reject) => {
-    readStream
-      .pipe(jsonLinesStream)
-      .on('data', function (data: unknown) {
-        resolve(data);
-      })
-      .on('error', function (err: unknown) {
-        reject(err);
-      })
-      .on('end', function () {
-        resolve('End');
-      });
+    const priceFilePath = GcloudModel.buildPriceFilePath({ day, meteringPointId, month, year });
+
+    let priceFile;
+
+    if (priceFilePath) {
+      priceFile = bucket.file(priceFilePath);
+    }
+
+    if (priceFile) {
+      promiseData.electricityPrice.push(
+        priceFile.download().catch((err) => {
+          if (err.code !== 404) {
+            throw err;
+          }
+        })
+      );
+    }
+
+    const usageFilePath = GcloudModel.buildUsageFilePath({ day, meteringPointId, month, year });
+
+    let usageFile;
+
+    if (usageFilePath) {
+      usageFile = bucket.file(usageFilePath);
+    }
+
+    if (usageFile) {
+      promiseData.electricityUsage.push(
+        usageFile.download().catch((err) => {
+          if (err.code !== 404) {
+            throw err;
+          }
+        })
+      );
+    }
+  }
+
+  (await Promise.all(promiseData.electricityPrice)).forEach((priceFileContent) => {
+    let priceData;
+
+    if (priceFileContent && priceFileContent[0]) {
+      priceData = priceFileContent[0].toString();
+    }
+
+    if (priceData) {
+      const formattedData = `[${priceData.replace(/\}\n\{/g, '}, {')}]`;
+
+      data.electricityPrice.push(...JSON.parse(formattedData));
+    }
   });
+
+  (await Promise.all(promiseData.electricityUsage)).forEach((usageFileContent) => {
+    let usageData;
+
+    if (usageFileContent && usageFileContent[0]) {
+      usageData = usageFileContent[0].toString();
+    }
+
+    if (usageData) {
+      const formattedData = `[${usageData.replace(/\}\n\{/g, '}, {')}]`;
+
+      data.electricityUsage.push(...JSON.parse(formattedData));
+    }
+  });
+
+  return data;
 };

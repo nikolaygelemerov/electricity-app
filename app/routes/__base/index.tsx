@@ -6,7 +6,7 @@ import { useLoaderData } from '@remix-run/react';
 
 import { Link } from '~/components';
 import { getUserFromSession } from '~/data/auth.server';
-import { DashBoardTabs } from '~/widgets';
+import { MeteringPointTabs } from '~/widgets';
 
 export default function Index() {
   const { t } = useTranslation();
@@ -14,7 +14,7 @@ export default function Index() {
   const profileData = useLoaderData<typeof loader>();
 
   return profileData ? (
-    <DashBoardTabs />
+    <MeteringPointTabs />
   ) : (
     <Link to="/auth" variant="success">
       <span>{t('login')}</span>

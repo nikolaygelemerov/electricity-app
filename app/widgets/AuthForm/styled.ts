@@ -18,7 +18,7 @@ export const Field = styled.p`
 
 export const Label = styled.label`
   flex: 1;
-  font-weight: var(--font-size-bold);
+  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-m);
 `;
 

@@ -1,26 +1,29 @@
-import { GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType, GraphQLString } from 'graphql';
 
 import { getUserFromSession } from '~/data/auth.server';
 import { readJSONLines } from '~/data/gcloud.server';
 
-import { ElectricityUsageType } from './electricity-usage-type';
+import { ElectricityDataType } from './electricity-data-type';
 import { UserType } from './user-type';
 
 export const RootQueryType = new GraphQLObjectType({
   fields: () => ({
-    electricityUsage: {
-      async resolve() {
-        const result = await readJSONLines('usage', {
-          day: '01',
-          month: '01',
-          year: '2022'
-        } as any);
-
-        console.log('RRRresult: ', result);
+    electricityData: {
+      args: {
+        from: { type: GraphQLString },
+        meteringPointId: { type: GraphQLString },
+        to: { type: GraphQLString }
+      },
+      async resolve(parentValue, { from, meteringPointId, to }) {
+        const result = await readJSONLines({
+          from,
+          meteringPointId,
+          to
+        });
 
         return result;
       },
-      type: ElectricityUsageType
+      type: ElectricityDataType
     },
     user: {
       async resolve(parentValue, args, { req }) {

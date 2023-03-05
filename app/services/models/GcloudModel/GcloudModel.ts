@@ -1,13 +1,9 @@
-import type { ElectricityCustomerOptions, ElectricityUsageOptions } from '~/types';
+import type { ElectricityQueryOptions } from '~/types';
 
 export class GcloudModel {
-  static buildUsageFilePath = ({ day, month, year }: ElectricityUsageOptions) =>
+  static buildPriceFilePath = ({ day, month, year }: ElectricityQueryOptions) =>
     `prices/${year}/${month}/${day}.jsonl`;
 
-  static buildCustomerFilePath = ({
-    day,
-    meteringPointId,
-    month,
-    year
-  }: ElectricityCustomerOptions) => `/usage/${year}/${month}/${day}/${meteringPointId}.jsonl`;
+  static buildUsageFilePath = ({ day, meteringPointId, month, year }: ElectricityQueryOptions) =>
+    `usage/${year}/${month}/${day}/${meteringPointId}.jsonl`;
 }
