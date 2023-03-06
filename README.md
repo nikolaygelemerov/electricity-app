@@ -20,7 +20,7 @@ Deployed on Netlify trough GitHub integration:
   - [ ] Preview electricity price chart for date period range
   - [ ] Preview electricity usage chart for date period range
 
-> **Disclaimer**
+> **Note**
 > Records were read only for the time period shown below in the picture
 
 ![Screenshot](screenshots/screenshot_01.png)
