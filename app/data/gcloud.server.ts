@@ -1,5 +1,11 @@
-import type { DownloadResponse } from '@google-cloud/storage';
+/* eslint-disable @typescript-eslint/no-shadow */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { File } from '@google-cloud/storage';
 import { Storage } from '@google-cloud/storage';
+import JSONStream from 'JSONStream';
+import MultiStream from 'multistream';
+import type internal from 'stream';
 
 import { GCLOUD_TOKI_BUCKET_NAME, GcloudModel } from '~/services';
 import type { ElectricityPriceData, ElectricityUsageData, ReadJSONLinesParams } from '~/types';
@@ -31,14 +37,14 @@ export const readJSONLines = async ({ from, meteringPointId, to }: ReadJSONLines
   const fromDate = new Date(from);
   const toDate = new Date(to);
 
-  const promiseData: {
-    electricityPrice: Promise<DownloadResponse | void>[];
-    electricityUsage: Promise<DownloadResponse | void>[];
-  } = { electricityPrice: [], electricityUsage: [] };
-
   const data: {
     electricityPrice: ElectricityPriceData[];
     electricityUsage: ElectricityUsageData[];
+  } = { electricityPrice: [], electricityUsage: [] };
+
+  const files: {
+    electricityPrice: File[];
+    electricityUsage: File[];
   } = { electricityPrice: [], electricityUsage: [] };
 
   for (let date = fromDate; date <= toDate; date.setDate(date.getDate() + 1)) {
@@ -55,13 +61,7 @@ export const readJSONLines = async ({ from, meteringPointId, to }: ReadJSONLines
     }
 
     if (priceFile) {
-      promiseData.electricityPrice.push(
-        priceFile.download().catch((err) => {
-          if (err.code !== 404) {
-            throw err;
-          }
-        })
-      );
+      files.electricityPrice.push(priceFile);
     }
 
     const usageFilePath = GcloudModel.buildUsageFilePath({ day, meteringPointId, month, year });
@@ -73,43 +73,85 @@ export const readJSONLines = async ({ from, meteringPointId, to }: ReadJSONLines
     }
 
     if (usageFile) {
-      promiseData.electricityUsage.push(
-        usageFile.download().catch((err) => {
-          if (err.code !== 404) {
-            throw err;
-          }
-        })
-      );
+      files.electricityUsage.push(usageFile);
     }
   }
 
-  (await Promise.all(promiseData.electricityPrice)).forEach((priceFileContent) => {
-    let priceData;
+  const streamPromises: {
+    electricityPrice: Promise<ElectricityPriceData | null>[];
+    electricityUsage: Promise<ElectricityUsageData | null>[];
+  } = { electricityPrice: [], electricityUsage: [] };
 
-    if (priceFileContent && priceFileContent[0]) {
-      priceData = priceFileContent[0].toString();
-    }
+  const streams: internal.Readable[] = [];
 
-    if (priceData) {
-      const formattedData = `[${priceData.replace(/\}\n\{/g, '}, {')}]`;
+  files.electricityPrice.forEach((file) => {
+    streamPromises.electricityPrice.push(
+      new Promise(async (resolve) => {
+        const exists = await file.exists();
 
-      data.electricityPrice.push(...JSON.parse(formattedData));
-    }
+        if (!exists[0]) {
+          resolve(null);
+        } else {
+          streams.push(file.createReadStream());
+
+          resolve(null);
+        }
+      })
+    );
   });
 
-  (await Promise.all(promiseData.electricityUsage)).forEach((usageFileContent) => {
-    let usageData;
+  files.electricityUsage.forEach((file) => {
+    streamPromises.electricityUsage.push(
+      new Promise(async (resolve) => {
+        const exists = await file.exists();
 
-    if (usageFileContent && usageFileContent[0]) {
-      usageData = usageFileContent[0].toString();
-    }
+        if (!exists[0]) {
+          resolve(null);
+        } else {
+          streams.push(file.createReadStream());
 
-    if (usageData) {
-      const formattedData = `[${usageData.replace(/\}\n\{/g, '}, {')}]`;
-
-      data.electricityUsage.push(...JSON.parse(formattedData));
-    }
+          resolve(null);
+        }
+      })
+    );
   });
 
-  return data;
+  await Promise.all(streamPromises.electricityPrice);
+  await Promise.all(streamPromises.electricityUsage);
+
+  const stream = new MultiStream(streams);
+
+  const priceData: ElectricityPriceData[] = [];
+  const usageData: ElectricityUsageData[] = [];
+
+  await new Promise((resolve) => {
+    stream
+      .pipe(JSONStream.parse('*'))
+      .on('data', (data: any) => {
+        console.log('data: ', data);
+
+        if (data) {
+          if (typeof data.price !== 'undefined') {
+            priceData.push(data as ElectricityPriceData);
+          } else if (typeof data.kwh !== 'undefined') {
+            usageData.push(data as ElectricityUsageData);
+          }
+        }
+
+        resolve(null);
+      })
+      .on('error', (err: any) => {
+        console.error(err);
+      })
+      .on('end', () => {
+        console.log('Finished reading price data');
+      });
+  });
+
+  console.log('DDATTA: ', { electricityPrice: priceData, electricityUsage: usageData });
+
+  return {
+    electricityPrice: priceData,
+    electricityUsage: usageData
+  };
 };
