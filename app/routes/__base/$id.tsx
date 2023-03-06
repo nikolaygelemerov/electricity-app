@@ -1,6 +1,7 @@
 import type { ChartSeriesType, ValueType } from '@syncfusion/ej2-react-charts';
 
-import { useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ActionFunction } from 'react-router';
 
@@ -33,6 +34,8 @@ export default function Index() {
     usage: true
   });
 
+  const [selectedDates, setSelectedDates] = useState<{ from: number; to: number }>();
+
   const actionData:
     | {
         data: {
@@ -50,6 +53,8 @@ export default function Index() {
     return {
       id: 'price',
       primaryXAxis: {
+        ...(selectedDates?.from ? { minimum: selectedDates.from } : {}),
+        ...(selectedDates?.to ? { maximum: selectedDates.to } : {}),
         title: t('date'),
         valueType: 'DateTime' as ValueType
       },
@@ -65,10 +70,28 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData?.data?.electricityData?.electricityPrice, i18n.language]);
 
+  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+    const form = e.target as HTMLFormElement;
+
+    const formData = new FormData(form);
+
+    const { from, to } = Object.fromEntries(formData);
+
+    setSelectedDates({
+      from: new Date(from as string).getTime(),
+      to: new Date(to as string).getTime()
+    });
+  }, []);
+
   const electricityUsageChartProps = useMemo(() => {
     return {
       id: 'usage',
-      primaryXAxis: { title: t('date'), valueType: 'DateTime' as ValueType },
+      primaryXAxis: {
+        ...(selectedDates?.from ? { minimum: selectedDates.from } : {}),
+        ...(selectedDates?.to ? { maximum: selectedDates.to } : {}),
+        title: t('date'),
+        valueType: 'DateTime' as ValueType
+      },
       primaryYAxis: { title: t('kwh') },
       seriesData:
         actionData?.data?.electricityData?.electricityUsage.map((item) => ({
@@ -91,7 +114,7 @@ export default function Index() {
             }
             value={selectedChart}
           />
-          <S.Form method="post">
+          <S.Form method="post" onSubmit={onSubmit}>
             <DatePicker id="from" label="dateFrom" name="from" />
             <DatePicker id="to" label="dateTo" name="to" />
             <Button
