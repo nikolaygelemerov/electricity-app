@@ -20,7 +20,10 @@ bucket
   });
   */
 
-const storage = new Storage({ credentials: JSON.parse(process.env.GCLOUD_CONFIG as string) });
+const storage = new Storage({
+  credentials: JSON.parse(process.env.GCLOUD_CONFIG as string),
+  timeout: 120000
+});
 
 const bucket = storage.bucket(GCLOUD_TOKI_BUCKET_NAME);
 
