@@ -7,13 +7,14 @@ import { DatePicker as DatePickerCmp } from '~/components';
 
 export const Container = styled.div`
   display: grid;
-  /* stylelint-disable plugin/no-unsupported-browser-features */
+  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
   grid-template-columns: 1fr 8fr;
   gap: calc(var(--offset-xl) * 3);
   width: 100%;
   padding: calc(var(--offset-xl) * 3);
 
   @media screen and (max-width: 850px) {
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
     grid-template-columns: 1fr;
   }
 `;
