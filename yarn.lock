@@ -1909,7 +1909,7 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@rounik/react-custom-hooks@0.1.13":
+"@rounik/react-custom-hooks@0.1.13", "@rounik/react-custom-hooks@^0.1.13":
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/@rounik/react-custom-hooks/-/react-custom-hooks-0.1.13.tgz#5f261fef4c51c771f2f33205841b73112b26cbc9"
   integrity sha512-IMED7wKH9wqfQb8yXRbZZirMiDAChmtD2ygABtcKGQ1iF3dAeJKW9fm64lC2nP3mdmKiE2MLxLWWBWtugp4s9Q==

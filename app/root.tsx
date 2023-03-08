@@ -2,7 +2,7 @@ import { registerLicense } from '@syncfusion/ej2-base';
 
 import { useTranslation } from 'react-i18next';
 
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderArgs, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import {
   Links,
@@ -62,3 +62,11 @@ export default function Root() {
 export function links() {
   return [{ href: mainStyles, rel: 'stylesheet' }];
 }
+
+export const meta: MetaFunction = () => {
+  return {
+    charset: 'utf-8',
+    title: 'Electricity App',
+    viewport: 'width=device-width,initial-scale=1'
+  };
+};

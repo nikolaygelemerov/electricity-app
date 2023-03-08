@@ -10,21 +10,6 @@ export const Main = styled.main`
   background-color: var(--color-background);
 `;
 
-export const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: var(--offset-xl) calc(var(--offset-xl) * 2);
-  background-color: var(--color-header-background);
-  box-shadow: var(--box-shadow);
-`;
-
-export const HeaderSubGroup = styled.div`
-  display: flex;
-  gap: calc(var(--offset-xl) * 4);
-`;
-
 export const BreadcrumbsWrap = styled.div`
   display: flex;
   align-items: flex-start;

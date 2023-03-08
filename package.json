@@ -36,6 +36,7 @@
     "@remix-run/node": "^1.13.0",
     "@remix-run/react": "^1.13.0",
     "@remix-run/serve": "^1.13.0",
+    "@rounik/react-custom-hooks": "^0.1.13",
     "@rounik/react-form-builder": "^0.0.60",
     "@syncfusion/ej2-react-charts": "^20.4.52",
     "JSONStream": "^1.3.5",

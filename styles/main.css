@@ -26,6 +26,7 @@
   --font-size-xxl: 2rem;
 
   /* font-family */
+  /* stylelint-disable-next-line value-keyword-case */
   --font-family: Arial, Helvetica, sans-serif;
 
   /* font-weight */
@@ -52,4 +53,24 @@
 body {
   margin: 0;
   padding: 0;
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
 }
