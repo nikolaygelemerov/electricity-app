@@ -1,17 +1,5 @@
 import styled from '@emotion/styled';
 
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--offset-m);
-`;
-
-export const Label = styled.label`
-  color: var(--color-text);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-xxl);
-`;
-
 export const Input = styled.input`
   padding: var(--offset-xl);
   overflow: hidden;
@@ -29,5 +17,9 @@ export const Input = styled.input`
 
   &::-ms-clear {
     display: none;
+  }
+
+  @media screen and (max-width: 850px) {
+    flex: 2;
   }
 `;

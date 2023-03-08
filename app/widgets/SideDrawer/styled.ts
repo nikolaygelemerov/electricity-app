@@ -19,7 +19,6 @@ export const Container = styled.div<SideDrawerProps>`
   min-height: 100dvh;
   padding: calc(var(--offset-xl) * 2);
   background-color: var(--color-header-background);
-  box-shadow: var(--box-shadow);
   transform: translateX(-100%);
   animation-duration: var(--transition-duration-normal);
   animation-timing-function: ease-out;
@@ -37,7 +36,7 @@ export const Container = styled.div<SideDrawerProps>`
 
 export const BarOpenWrap = styled.button<BarWrap>`
   position: absolute;
-  top: 11rem;
+  top: 14rem;
   left: 100%;
   width: 3.7rem;
   margin: 0;
@@ -56,7 +55,7 @@ export const BarOpenWrap = styled.button<BarWrap>`
 
 export const BarCloseWrap = styled.button<BarWrap>`
   position: absolute;
-  top: 11rem;
+  top: 14rem;
   right: 0;
   width: ${(props) => (props.opened ? '3.7rem' : '0')};
   margin: 0;

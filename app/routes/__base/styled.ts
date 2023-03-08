@@ -3,12 +3,19 @@ import { HeightTransitionBox as HeightTransitionBoxLib } from '@rounik/react-for
 
 import { Form as RemixForm } from '@remix-run/react';
 
+import { DatePicker as DatePickerCmp } from '~/components';
+
 export const Container = styled.div`
-  display: flex;
+  display: grid;
+  /* stylelint-disable plugin/no-unsupported-browser-features */
+  grid-template-columns: 1fr 8fr;
   gap: calc(var(--offset-xl) * 3);
-  align-items: flex-start;
   width: 100%;
   padding: calc(var(--offset-xl) * 3);
+
+  @media screen and (max-width: 850px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const Filters = styled.div`
@@ -16,12 +23,45 @@ export const Filters = styled.div`
   flex: 1;
   flex-direction: column;
   gap: calc(var(--offset-xl) * 3);
+
+  @media screen and (max-width: 850px) {
+    align-items: center;
+  }
 `;
 
 export const Form = styled(RemixForm)`
   display: flex;
   flex-direction: column;
-  gap: calc(var(--offset-xl) * 3);
+  gap: var(--offset-xl);
+`;
+
+export const Field = styled.p`
+  display: flex;
+  flex-direction: column;
+  gap: var(--offset-m);
+
+  @media screen and (max-width: 850px) {
+    flex-direction: row;
+    gap: var(--offset-xl);
+    align-items: center;
+    justify-content: space-between;
+  }
+`;
+
+export const Label = styled.label`
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xxl);
+
+  @media screen and (max-width: 850px) {
+    flex: 1;
+  }
+`;
+
+export const DatePicker = styled(DatePickerCmp)`
+  @media screen and (max-width: 850px) {
+    flex: 2;
+  }
 `;
 
 export const ChartWrap = styled.div`
@@ -29,8 +69,14 @@ export const ChartWrap = styled.div`
   flex: 4;
   flex-direction: column;
   gap: calc(var(--offset-xl) * 3);
+  overflow: hidden;
 `;
 
 export const HeightTransitionBox = styled(HeightTransitionBoxLib)`
   width: 100%;
+  overflow-x: hidden !important;
+
+  > div {
+    overflow-x: hidden !important;
+  }
 `;

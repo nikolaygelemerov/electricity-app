@@ -25,6 +25,8 @@ import {
 
 import { memo, useMemo } from 'react';
 
+import * as S from './styled';
+
 interface ElectricityChartProps {
   animation?: AnimationModel;
   border?: BorderModel;
@@ -53,10 +55,6 @@ const defaultZoomsettings: ZoomSettingsModel = {
 const defaultLegendSettings: LegendSettingsModel = { visible: true };
 
 const defaultTooltip = { enable: true, shared: true };
-
-// const primaryXAxis: AxisModel = { title: 'Date', valueType: 'DateTime' };
-// const primaryYAxis: AxisModel = { title: 'Price', valueType: 'Double' };
-// const seriesData = data.map((d) => ({ x: new Date(d.timestamp), y: d.price }));
 
 export const ElectricityChart = memo<ElectricityChartProps>(
   ({
@@ -118,31 +116,35 @@ export const ElectricityChart = memo<ElectricityChartProps>(
     );
 
     return (
-      <ChartComponent
-        key={title}
-        id={id}
-        legendSettings={legendSettings}
-        primaryXAxis={formattedPrimaryXAxis}
-        primaryYAxis={formattedPrimaryYAxis}
-        title={title}
-        titleStyle={titleStyle}
-        zoomSettings={zoomsettings}
-        tooltip={tooltip}
-      >
-        <Inject services={[AreaSeries, Legend, Tooltip, DataLabel, Zoom, DateTime]} />
-        <SeriesCollectionDirective>
-          <SeriesDirective
-            animation={animation}
-            border={border}
-            dataSource={seriesData}
-            name={name}
-            opacity={opacity}
-            type={type}
-            xName="x"
-            yName="y"
-          ></SeriesDirective>
-        </SeriesCollectionDirective>
-      </ChartComponent>
+      <S.Container>
+        <ChartComponent
+          key={title}
+          id={id}
+          legendSettings={legendSettings}
+          primaryXAxis={formattedPrimaryXAxis}
+          primaryYAxis={formattedPrimaryYAxis}
+          title={title}
+          titleStyle={titleStyle}
+          tooltip={tooltip}
+          width="100%"
+          height="100%"
+          zoomSettings={zoomsettings}
+        >
+          <Inject services={[AreaSeries, Legend, Tooltip, DataLabel, Zoom, DateTime]} />
+          <SeriesCollectionDirective>
+            <SeriesDirective
+              animation={animation}
+              border={border}
+              dataSource={seriesData}
+              name={name}
+              opacity={opacity}
+              type={type}
+              xName="x"
+              yName="y"
+            ></SeriesDirective>
+          </SeriesCollectionDirective>
+        </ChartComponent>
+      </S.Container>
     );
   }
 );

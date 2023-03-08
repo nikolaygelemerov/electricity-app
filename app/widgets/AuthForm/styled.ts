@@ -7,6 +7,7 @@ export const Form = styled(RemixForm)`
   flex-direction: column;
   gap: var(--offset-xl);
   width: 45rem;
+  padding: 0 calc(var(--offset-xl) * 2);
 `;
 
 export const Field = styled.p`
