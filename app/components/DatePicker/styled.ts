@@ -18,8 +18,4 @@ export const Input = styled.input`
   &::-ms-clear {
     display: none;
   }
-
-  @media screen and (max-width: 850px) {
-    flex: 2;
-  }
 `;

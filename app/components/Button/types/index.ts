@@ -1,4 +1,5 @@
 export interface ButtonProps {
+  className?: string;
   dataTest?: string;
   disabled?: boolean;
   onClick?: () => void;

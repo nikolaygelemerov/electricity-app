@@ -9,9 +9,9 @@ import type { LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import type { CatchBoundaryComponent } from '@remix-run/react';
-import { useActionData, useTransition } from '@remix-run/react';
+import { useActionData, useNavigation } from '@remix-run/react';
 
-import { Button } from '~/components';
+import { Button, DatePicker } from '~/components';
 import { getUserFromSession } from '~/data/auth.server';
 import { graphQLClient } from '~/entry.server';
 import { ELECTRICITY_DATA_QUERY } from '~/queries';
@@ -26,7 +26,7 @@ import { CatchBoundaryCmp, ChartSelect, ElectricityChart } from '~/widgets';
 import * as S from './styled';
 
 export default function Index() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const { i18n, t } = useTranslation();
 
   const [selectedChart, setSelectedChart] = useState<ChartSelectValue>({
@@ -47,7 +47,7 @@ export default function Index() {
       }
     | undefined = useActionData<typeof action>();
 
-  const isSubmitting = useMemo(() => transition.state !== 'idle', [transition.state]);
+  const isSubmitting = useMemo(() => navigation.state !== 'idle', [navigation.state]);
 
   const electricityPriceChartProps = useMemo(() => {
     return {
@@ -117,11 +117,11 @@ export default function Index() {
           <S.Form method="post" onSubmit={onSubmit}>
             <S.Field>
               <S.Label htmlFor="from">{t('dateFrom')}</S.Label>
-              <S.DatePicker id="from" name="from" />
+              <DatePicker id="from" name="from" />
             </S.Field>
             <S.Field>
               <S.Label htmlFor="to">{t('dateTo')}</S.Label>
-              <S.DatePicker id="to" name="to" />
+              <DatePicker id="to" name="to" />
             </S.Field>
             <Button
               disabled={isSubmitting}

@@ -3,10 +3,10 @@ import { GraphQLObjectType, GraphQLString } from 'graphql';
 import { getUserFromSession } from '~/data/auth.server';
 import { readJSONLines } from '~/data/gcloud.server';
 
-import { ElectricityDataType } from './electricity-data-type';
-import { UserType } from './user-type';
+import { ElectricityDataType } from './types/electricity-data-type';
+import { UserType } from './types/user-type';
 
-export const RootQueryType = new GraphQLObjectType({
+export const query = new GraphQLObjectType({
   fields: () => ({
     electricityData: {
       args: {
