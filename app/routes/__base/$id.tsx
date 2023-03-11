@@ -11,7 +11,7 @@ import { redirect } from '@remix-run/node';
 import type { CatchBoundaryComponent } from '@remix-run/react';
 import { useActionData, useNavigation } from '@remix-run/react';
 
-import { Button, DatePicker } from '~/components';
+import { Button } from '~/components';
 import { getUserFromSession } from '~/data/auth.server';
 import { graphQLClient } from '~/entry.server';
 import { ELECTRICITY_DATA_QUERY } from '~/queries';
@@ -117,11 +117,11 @@ export default function Index() {
           <S.Form method="post" onSubmit={onSubmit}>
             <S.Field>
               <S.Label htmlFor="from">{t('dateFrom')}</S.Label>
-              <DatePicker id="from" name="from" />
+              <S.DatePicker id="from" name="from" />
             </S.Field>
             <S.Field>
               <S.Label htmlFor="to">{t('dateTo')}</S.Label>
-              <DatePicker id="to" name="to" />
+              <S.DatePicker id="to" name="to" />
             </S.Field>
             <Button
               disabled={isSubmitting}

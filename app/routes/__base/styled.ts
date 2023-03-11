@@ -3,6 +3,8 @@ import { HeightTransitionBox as HeightTransitionBoxLib } from '@rounik/react-for
 
 import { Form as RemixForm } from '@remix-run/react';
 
+import { DatePicker as DatePickerCmp } from '~/components';
+
 export const Container = styled.div`
   display: grid;
   /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
@@ -51,6 +53,16 @@ export const Label = styled.label`
   color: var(--color-text);
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-xxl);
+
+  @media screen and (max-width: 850px) {
+    flex: 1;
+  }
+`;
+
+export const DatePicker = styled(DatePickerCmp)`
+  @media screen and (max-width: 850px) {
+    flex: 2;
+  }
 `;
 
 export const ChartWrap = styled.div`
